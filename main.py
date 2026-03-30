@@ -14,7 +14,7 @@ if comando:
 
     url = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}"
     headers = {"xi-api-key": API_KEY, "Content-Type": "application/json"}
-    data = {"text": f"Hola Xavier, sistema operativo en línea.", "model_id": "eleven_monolingual_v1"}
+data = {"text": f"Hola Xavier, sistema operativo en línea.", "model_id": "eleven_multilingual_v2"}
 
     try:
         response = requests.post(url, json=data, headers=headers)
