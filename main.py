@@ -1,34 +1,22 @@
 import streamlit as st
-import requests
+from gtts import gTTS
+import os
 
-# --- CONFIGURACIÓN ---
-API_KEY = "43e119c3485b24d5a6c614a5558315f000d5a12afd0d7dcdf4e238db409f373f" # <--- No olvides poner tu llave real aquí
-VOICE_ID = "21m00Tcm4TlvDq8ikWAM" 
+st.title("🦾 JARVIS : NÚCLEO v2.2 (SISTEMA DE EMERGENCIA)")
 
-st.title("🦾 JARVIS : NÚCLEO v2.1")
-
-comando = st.text_input("📡 ORDEN:")
+comando = st.text_input("📡 ORDEN DEL CREADOR:")
 
 if comando:
-    st.write(f"🤖 Procesando: {comando}")
+    respuesta = f"Señor, sistema de audio restablecido. He procesado su orden: {comando}"
+    st.write(f"🤖 {respuesta}")
 
-    url = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}"
-    headers = {"xi-api-key": API_KEY, "Content-Type": "application/json"}
-    
-    # USAMOS EL MODELO V2 QUE SÍ FUNCIONA EN LA CUENTA GRATIS
-    data = {
-        "text": f"He recibido su orden, señor. Iniciando protocolos en Portoviejo.", 
-        "model_id": "eleven_multilingual_v2"
-    }
-
+    # --- GENERAR AUDIO CON GOOGLE ---
     try:
-        response = requests.post(url, json=data, headers=headers)
+        tts = gTTS(text=respuesta, lang='es', tld='com.mx')
+        tts.save("jarvis_voz.mp3")
         
-        if response.status_code == 200:
-            st.success("✅ ¡CONEXIÓN EXITOSA!")
-            st.audio(response.content, format="audio/mp3")
-        else:
-            st.error(f"❌ ERROR {response.status_code}: {response.text}")
-            
+        # --- REPRODUCIR ---
+        st.audio("jarvis_voz.mp3")
+        st.success("✅ Audio generado correctamente")
     except Exception as e:
-        st.error(f"⚠️ Error de sistema: {e}")
+        st.error(f"Error en el sistema de voz: {e}")
