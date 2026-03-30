@@ -2,26 +2,43 @@ import streamlit as st
 from gtts import gTTS
 import os
 
-st.title("🦾 JARVIS : NÚCLEO v2.2")
+# --- CONFIGURACIÓN DEL NÚCLEO ---
+st.set_page_config(page_title="JARVIS v2.5", page_icon="🦾")
 
-# --- INTERFAZ ---
-comando = st.text_input("📡 ORDEN DEL CREADOR (Escribe algo aquí):")
+st.title("🦾 JARVIS : NÚCLEO OPERATIVO")
+st.subheader("Conectado desde Portoviejo, Ecuador")
+
+# --- ENTRADA DE COMANDOS ---
+comando = st.text_input("📡 ORDEN DEL CREADOR (Escribe aquí):")
 
 if comando:
-    # Jarvis responde confirmando la orden
-    respuesta = f"Señor, he procesado su comando: {comando}. El sistema de audio está activo."
-    st.write(f"🤖 {respuesta}")
+    # Lógica de respuesta inteligente
+    if "entrenamiento" in comando.lower() or "gym" in comando.lower():
+        respuesta = "Entendido, señor. Iniciando protocolos de hipertrofia. Hoy es un gran día para entrenar esas piernas."
+    elif "fútbol" in comando.lower() or "futbol" in comando.lower():
+        respuesta = "Protocolo de deportista activo. Calculando resistencia para el partido, señor."
+    elif "proteína" in comando.lower() or "comer" in comando.lower():
+        respuesta = "Señor, recuerde que si no hay suficiente proteína, no habrá crecimiento. ¡Busque esos huevos en la cocina!"
+    else:
+        respuesta = f"He procesado su comando, señor: {comando}. Sistema en línea."
 
+    # --- MOSTRAR RESPUESTA ---
+    st.write(f"🤖 **Jarvis:** {respuesta}")
+
+    # --- GENERAR VOZ (GRATIS Y RÁPIDO) ---
     try:
-        # Generamos el audio usando la tecnología de Google
         tts = gTTS(text=respuesta, lang='es', tld='com.mx')
-        tts.save("jarvis_voz.mp3")
-        
-        # Mostramos el reproductor de audio
-        st.audio("jarvis_voz.mp3")
-        st.success("✅ ¡CONEXIÓN EXITOSA! Jarvis está hablando.")
+        tts.save("voz_jarvis.mp3")
+        st.audio("voz_jarvis.mp3")
+        st.success("✅ Audio generado correctamente")
     except Exception as e:
-        st.error(f"⚠️ Error en el sistema de voz: {e}")
+        st.error(f"Error en el módulo de voz: {e}")
 
-# --- NOTA PARA EL CREADOR ---
-st.info("Nota: Este sistema usa Google Voice para evitar los bloqueos de ElevenLabs.")
+# --- BARRA LATERAL DE ESTADO ---
+st.sidebar.title("📊 Estado del Sistema")
+st.sidebar.write("👤 **Creador:** Xavier")
+st.sidebar.write("🔋 **Energía:** 100%")
+st.sidebar.write("🌐 **Conexión:** Global Activa")
+
+if st.sidebar.button("Reiniciar Sistemas"):
+    st.rerun()
