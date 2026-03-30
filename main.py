@@ -1,48 +1,38 @@
 import streamlit as st
 import time
+import requests
 
-# --- CONFIGURACIÓN DE IDENTIDAD (EL CREADOR) ---
-st.set_page_config(page_title="JARVIS | NÚCLEO CENTRAL", layout="wide", page_icon="🦾")
+# --- CONFIGURACIÓN DE VOZ (NIVEL 2) ---
+# XAVIER: PEGA TU LLAVE AQUÍ ABAJO ENTRE LAS COMILLAS
+ELEVEN_LABS_API_KEY = "sk_ae4c8fc4bfd356753fc2aab56caf6c60cc978c71c432f6e2" 
+VOICE_ID = "pNInz6obpg8ndMArhYvH" 
 
-# Estilo Visual "Protocolo Iron Man" - Solo para Xavier
-st.markdown("""
-    <style>
-    .main { background-color: #000; color: #00f2ff; font-family: 'Share Tech Mono', monospace; }
-    .stTextInput>div>div>input { background-color: #050505; color: #00f2ff; border: 1px solid #00f2ff; }
-    div[data-testid="stExpander"] { background-color: #0a0a0a; border: 1px solid #00f2ff; }
-    code { color: #00f2ff !important; }
-    </style>
-    """, unsafe_allow_html=True)
+def jarvis_habla(texto):
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}"
+    headers = {
+        "Accept": "audio/mpeg",
+        "Content-Type": "application/json",
+        "xi-api-key": ELEVEN_LABS_API_KEY
+    }
+    data = {
+        "text": texto,
+        "model_id": "eleven_monolingual_v1",
+        "voice_settings": {"stability": 0.5, "similarity_boost": 0.5}
+    }
+    try:
+        response = requests.post(url, json=data)
+        if response.status_code == 200:
+            with open("jarvis_voice.mp3", "wb") as f:
+                f.write(response.content)
+            st.audio("jarvis_voice.mp3", format="audio/mp3")
+    except Exception as e:
+        st.error(f"Error: {e}")
 
-# --- INICIALIZACIÓN DE MEMORIA ---
-if 'log' not in st.session_state:
-    st.session_state.log = ["SISTEMA OPERATIVO JARVIS v1.0 ONLINE", "BIENVENIDO, SEÑOR XAVIER"]
+# --- INTERFAZ ---
+st.title("🦾 JARVIS : NÚCLEO v2")
+comando = st.text_input("📡 ESPERANDO ORDEN...")
 
-# --- CABECERA DE ESTADO ---
-st.title("🦾 JARVIS : NÚCLEO CENTRAL")
-st.write(f"LOCALIZACIÓN: **Portoviejo, Manabí** | ESTADO: **FASE 1 (LÓGICA)**")
-
-# --- CONSOLA DE COMANDOS ---
-col1, col2 = st.columns([2, 1])
-
-with col1:
-    comando = st.text_input("📡 ESPERANDO ORDEN DEL CREADOR...", placeholder="Ej: 'Jarvis, prepara el sistema'...")
-    if comando:
-        with st.spinner("Procesando protocolo..."):
-            time.sleep(0.8)
-            # Lógica de respuesta del Núcleo
-            cmd_lower = comando.lower()
-            if "hola" in cmd_lower:
-                resp = "Hola, Xavier. Todos los sistemas están en espera de instrucciones."
-            elif "sistema" in cmd_lower:
-                resp = "Sistemas operativos al 100%. Memoria de 63kg y Nutrición en modo espera."
-            elif "estado" in cmd_lower:
-                resp = "Núcleo estable. Protocolos de voz y domótica pendientes de activación."
-            else:
-                resp = f"Orden '{comando}' registrada en el núcleo central. Procesando..."
-            
-            st.session_state.log.append(f"👤 {comando}")
-            st.session_state.log.append(f"🤖 {resp}")
-
-    # Mostrar el historial estilo Terminal (Más reciente arriba)
-    st.divider
+if comando:
+    resp = f"He registrado la orden '{comando}'. Iniciando protocolo de audio."
+    st.write(f"🤖 {resp}")
+    jarvis_habla(resp)
