@@ -1,44 +1,43 @@
 import streamlit as st
 from gtts import gTTS
+import requests
 import os
 
-# --- CONFIGURACIÓN DEL NÚCLEO ---
-st.set_page_config(page_title="JARVIS v2.5", page_icon="🦾")
+# --- NÚCLEO DE JARVIS ---
+st.set_page_config(page_title="JARVIS", page_icon="🦾")
 
-st.title("🦾 JARVIS : NÚCLEO OPERATIVO")
-st.subheader("Conectado desde Portoviejo, Ecuador")
+# AQUÍ PEGAS TU ENLACE (Asegúrate de que esté entre comillas)
+PIPEDREAM_URL = "https://eo3dszqrdtw6qzk.m.pipedream.net"
 
-# --- ENTRADA DE COMANDOS ---
-comando = st.text_input("📡 ORDEN DEL CREADOR (Escribe aquí):")
+st.title("🦾 NÚCLEO OPERATIVO: JARVIS")
+st.write("---")
+
+comando = st.text_input("📡 ÓRDENES DEL CREADOR:")
 
 if comando:
-    # Lógica de respuesta inteligente
-    if "entrenamiento" in comando.lower() or "gym" in comando.lower():
-        respuesta = "Entendido, señor. Iniciando protocolos de hipertrofia. Hoy es un gran día para entrenar esas piernas."
-    elif "fútbol" in comando.lower() or "futbol" in comando.lower():
-        respuesta = "Protocolo de deportista activo. Calculando resistencia para el partido, señor."
-    elif "proteína" in comando.lower() or "comer" in comando.lower():
-        respuesta = "Señor, recuerde que si no hay suficiente proteína, no habrá crecimiento. ¡Busque esos huevos en la cocina!"
+    comando_low = comando.lower()
+    
+    # Lógica de respuestas (Lo que ya tenías bien)
+    if "entrenamiento" in comando_low or "gym" in comando_low:
+        respuesta = "Entendido, señor. Iniciando protocolos de hipertrofia para pierna y glúteo. Enviando señal al sistema."
+        # ESTO ENVÍA LA SEÑAL A INTERNET
+        try:
+            requests.post(PIPEDREAM_URL, json={"evento": "gym", "usuario": "Xavier"})
+            st.success("🌐 Señal enviada a la red con éxito.")
+        except:
+            st.error("No se pudo conectar con el servidor.")
+            
+    elif "fútbol" in comando_low or "futbol" in comando_low:
+        respuesta = "Señor, el protocolo de fútbol está listo. Recuerde hidratarse bien en Portoviejo."
     else:
-        respuesta = f"He procesado su comando, señor: {comando}. Sistema en línea."
+        respuesta = f"He recibido su orden: {comando}. Esperando más instrucciones."
 
-    # --- MOSTRAR RESPUESTA ---
+    # VOZ DE JARVIS
     st.write(f"🤖 **Jarvis:** {respuesta}")
+    tts = gTTS(text=respuesta, lang='es', tld='com.mx')
+    tts.save("voz.mp3")
+    st.audio("voz.mp3")
 
-    # --- GENERAR VOZ (GRATIS Y RÁPIDO) ---
-    try:
-        tts = gTTS(text=respuesta, lang='es', tld='com.mx')
-        tts.save("voz_jarvis.mp3")
-        st.audio("voz_jarvis.mp3")
-        st.success("✅ Audio generado correctamente")
-    except Exception as e:
-        st.error(f"Error en el módulo de voz: {e}")
-
-# --- BARRA LATERAL DE ESTADO ---
-st.sidebar.title("📊 Estado del Sistema")
-st.sidebar.write("👤 **Creador:** Xavier")
-st.sidebar.write("🔋 **Energía:** 100%")
-st.sidebar.write("🌐 **Conexión:** Global Activa")
-
-if st.sidebar.button("Reiniciar Sistemas"):
-    st.rerun()
+# PANEL LATERAL
+st.sidebar.title("📊 ESTADO")
+st.sidebar.info("Creador: Xavier | Ubicación: Portoviejo")
