@@ -2,10 +2,10 @@ import streamlit as st
 import requests
 
 # --- CONFIGURACIÓN ---
-API_KEY = "sk_13d8496fec0caefbaca1ac3e3f67d4c9f240a17fcf7764be" 
+API_KEY = "PEGA_AQUÍ_TU_LLAVE" # <--- No olvides poner tu llave real aquí
 VOICE_ID = "21m00Tcm4TlvDq8ikWAM" 
 
-st.title("🦾 JARVIS : DIAGNÓSTICO")
+st.title("🦾 JARVIS : NÚCLEO v2.1")
 
 comando = st.text_input("📡 ORDEN:")
 
@@ -14,7 +14,12 @@ if comando:
 
     url = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}"
     headers = {"xi-api-key": API_KEY, "Content-Type": "application/json"}
-data = {"text": f"Hola Xavier, sistema operativo en línea.", "model_id": "eleven_multilingual_v2"}
+    
+    # USAMOS EL MODELO V2 QUE SÍ FUNCIONA EN LA CUENTA GRATIS
+    data = {
+        "text": f"He recibido su orden, señor. Iniciando protocolos en Portoviejo.", 
+        "model_id": "eleven_multilingual_v2"
+    }
 
     try:
         response = requests.post(url, json=data, headers=headers)
@@ -23,9 +28,7 @@ data = {"text": f"Hola Xavier, sistema operativo en línea.", "model_id": "eleve
             st.success("✅ ¡CONEXIÓN EXITOSA!")
             st.audio(response.content, format="audio/mp3")
         else:
-            # ESTO NOS DIRÁ EL ERROR REAL
             st.error(f"❌ ERROR {response.status_code}: {response.text}")
-            st.warning("Revisa que tu API KEY sea la correcta y que hayas confirmado tu correo en ElevenLabs.")
             
     except Exception as e:
         st.error(f"⚠️ Error de sistema: {e}")
