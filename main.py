@@ -1,29 +1,31 @@
 import streamlit as st
 import requests
 
-# --- LA LLAVE MAESTRA ---
-# Xavier: Aquí pon la API Key que copiaste de ElevenLabs
+# --- CONFIGURACIÓN ---
 API_KEY = "sk_13d8496fec0caefbaca1ac3e3f67d4c9f240a17fcf7764be" 
-VOZ_ID = "pNInz6obpg8ndMArhYvH" # Voz de Adam
+VOICE_ID = "pNInz6obpg8ndMArhYvH" 
 
-st.title("🦾 JARVIS : NÚCLEO v2")
+st.title("🦾 JARVIS : DIAGNÓSTICO")
 
-comando = st.text_input("📡 ORDEN DEL CREADOR:")
+comando = st.text_input("📡 ORDEN:")
 
 if comando:
-    respuesta_texto = f"Señor, he procesado su orden: {comando}"
-    st.write(f"🤖 {respuesta_texto}")
+    st.write(f"🤖 Procesando: {comando}")
 
-    # --- PETICIÓN DE AUDIO ---
-    url = f"https://api.elevenlabs.io/v1/text-to-speech/{VOZ_ID}"
-    cabeceras = {"xi-api-key": API_KEY, "Content-Type": "application/json"}
-    datos = {"text": respuesta_texto, "model_id": "eleven_monolingual_v1"}
+    url = f"https://api.elevenlabs.io/v1/text-to-speech/{VOICE_ID}"
+    headers = {"xi-api-key": API_KEY, "Content-Type": "application/json"}
+    data = {"text": f"Hola Xavier, sistema operativo en línea.", "model_id": "eleven_monolingual_v1"}
 
-    response = requests.post(url, json=datos, headers=cabeceras)
-
-    if response.status_code == 200:
-        with open("voz.mp3", "wb") as f:
-            f.write(response.content)
-        st.audio("voz.mp3") # Aquí aparecerá el reproductor
-    else:
-        st.error("Error en la conexión de voz. Revisa la API Key.")
+    try:
+        response = requests.post(url, json=data, headers=headers)
+        
+        if response.status_code == 200:
+            st.success("✅ ¡CONEXIÓN EXITOSA!")
+            st.audio(response.content, format="audio/mp3")
+        else:
+            # ESTO NOS DIRÁ EL ERROR REAL
+            st.error(f"❌ ERROR {response.status_code}: {response.text}")
+            st.warning("Revisa que tu API KEY sea la correcta y que hayas confirmado tu correo en ElevenLabs.")
+            
+    except Exception as e:
+        st.error(f"⚠️ Error de sistema: {e}")
