@@ -3,7 +3,7 @@ import requests
 
 # --- CONFIGURACIÓN ---
 API_KEY = "sk_13d8496fec0caefbaca1ac3e3f67d4c9f240a17fcf7764be" 
-VOICE_ID = "pNInz6obpg8ndMArhYvH" 
+VOICE_ID = "21m00Tcm4TlvDq8ikWAM" 
 
 st.title("🦾 JARVIS : DIAGNÓSTICO")
 
