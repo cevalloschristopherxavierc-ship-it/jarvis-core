@@ -2,7 +2,7 @@ import streamlit as st
 import requests
 
 # 1. PEGA TU LLAVE AQUÍ ADENTRO:
-API_KEY = "TU_LLAVE_AQUÍ" 
+API_KEY = "sk_15243916765223077b514b60ded1123d20855a3b429153a6" 
 VOICE_ID = "21m00Tcm4TlvDq8ikWAM" 
 
 st.title("🦾 JARVIS : NÚCLEO v2.1")
