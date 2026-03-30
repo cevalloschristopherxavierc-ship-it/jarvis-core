@@ -3,7 +3,7 @@ import requests
 
 # --- LA LLAVE MAESTRA ---
 # Xavier: Aquí pon la API Key que copiaste de ElevenLabs
-API_KEY = "TU_API_KEY_AQUI" 
+API_KEY = "sk_ae4c8fc4bfd356753fc2aab56caf6c60cc978c71c432f6e2" 
 VOZ_ID = "pNInz6obpg8ndMArhYvH" # Voz de Adam
 
 st.title("🦾 JARVIS : NÚCLEO v2")
