@@ -76,15 +76,17 @@ Si en alguna parte de la edición quieres complementar tus imágenes de IA con v
 Ahora entraremos dentro de tu computadora virtual para instalar OpenMontage y configurarle la generación de imágenes por IA.
 
 1. En la lista de tus servidores de Google Cloud (Compute Engine > Instancias de VM), haz clic en el botón azul de la derecha que dice **"SSH"**.
+   * *⚠️ Nota Importante sobre Sudo/Permisos:* Si al intentar usar comandos con `sudo` te aparece un error que dice *"I'm sorry, I'm afraid I can't do that"*, significa que tu Google Cloud tiene activado "OS Login". Para solucionarlo, ve a la consola de Google Cloud, entra a la configuración de tu Instancia de VM, edítala y añade en la sección de **Metadatos** la clave `enable-oslogin` con el valor `FALSE`. Luego de guardar, reinicia la máquina y tu usuario tendrá todos los permisos `sudo` activados.
+
 2. Se abrirá una ventana negra de comandos. Copia y pega estos comandos uno por uno presionando **Enter** después de cada uno para instalar la base:
 
 ```bash
-# 1. Actualizar el sistema
+# 1. Actualizar el sistema de paquetes
 sudo apt update && sudo apt upgrade -y
 
-# 2. Instalar Node.js v18 (muy importante para crear los videos)
-curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-sudo apt install -y nodejs ffmpeg python3-pip python3-venv
+# 2. Instalar Node.js v20 (versión recomendada) y utilidades del sistema
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y git nodejs ffmpeg python3-pip python3-venv
 
 # 3. Descargar OpenMontage oficial de calesthio
 git clone https://github.com/calesthio/openmontage.git
@@ -127,20 +129,18 @@ PEXELS_API_KEY=Pega_Aquí_Tu_Llave_De_Pexels
 ## PASO 4: INSTALAR n8n (EL CEREBRO AUTOMÁTICO)
 Conectaremos todo de forma visual usando **n8n**.
 
-1. En la pantalla negra de SSH de antes, instala un mantenedor de programas encendidos para que no se apague al cerrar tu PC:
+Para evitar usar permisos de administrador global (`sudo npm`) y que la instalación sea mucho más rápida y limpia, podemos correr n8n directamente en segundo plano (incluso con túnel gratuito de n8n) usando `nohup`:
+
+1. En la terminal SSH, ejecuta el siguiente comando para iniciar n8n en segundo plano con su túnel de acceso seguro:
 ```bash
-sudo npm install -g pm2
-sudo npm install n8n -g
+nohup npx n8n start --tunnel > n8n_log.txt 2>&1 &
 ```
-2. Arranca n8n en segundo plano para que funcione 24/7:
+2. Espera unos 10 segundos y luego lee el archivo de registro para ver tu enlace de acceso seguro:
 ```bash
-pm2 start n8n -- start --tunnel
+cat n8n_log.txt
 ```
-3. Mira el log de n8n para ver tu enlace seguro escribiendo:
-```bash
-pm2 logs n8n
-```
-4. Copia el enlace web (terminado en `.hooks.n8n.cloud`), pégalo en el navegador de tu computadora personal y verás la interfaz visual de n8n.
+   *(Busca una línea que diga algo como: `Tunnel is active at: https://xxxxxxxx.hooks.n8n.cloud`).*
+3. Copia ese enlace web terminado en `.hooks.n8n.cloud`, pégalo en el navegador de tu computadora personal, ¡y listo! Ya estarás dentro de n8n sin haber tenido problemas de permisos globales.
 
 ---
 
