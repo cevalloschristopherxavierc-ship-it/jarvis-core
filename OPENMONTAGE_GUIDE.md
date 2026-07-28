@@ -1,106 +1,185 @@
-# Guía de Automatización: OpenMontage + n8n para Facebook & YouTube (Nicho Podcast - 100% Gratis)
-
-## 1. ¿Es real OpenMontage y es compatible con n8n?
-
-**Sí, es 100% real y compatible.**
-
-* **Qué es:** `calesthio/OpenMontage` (ahora en la organización `Open-Montage/OpenMontage`) es un sistema de producción de video agéntico de código abierto. En lugar de ser un simple generador de texto-a-video, es un conjunto de herramientas en **Python** y **Node.js (Remotion)** que investiga un tema, redacta un guion, descarga recursos gratuitos (de Pexels, Archive.org, Wikimedia) o los genera con IA, genera la locución y compila todo en un video profesional con subtítulos, transiciones y música mediante programación.
-* **Compatibilidad con n8n:** Totalmente compatible. Al ser un sistema basado en CLI (Línea de Comandos) y Python, **n8n** puede ejecutarlo de dos formas:
-  1. Usando el nodo **Execute Command** en un servidor propio (VPS) donde n8n y OpenMontage compartan el entorno.
-  2. Creando una API ultra-simple en Python (con Flask/FastAPI) que reciba los parámetros desde n8n mediante un nodo **HTTP Request** y devuelva el video renderizado.
+# Guía de Automatización Paso a Paso para Principiantes (OpenMontage + n8n)
+*Creado especialmente para que cualquier persona, sin importar su edad o experiencia, pueda construir su canal de videos de nicho tipo podcast 100% gratis.*
 
 ---
 
-## 2. ¿Es monetizable en Facebook y YouTube?
+## INTRODUCCIÓN SENCILLA
 
-**Sí, pero con advertencias cruciales.**
+¿Qué vamos a lograr?
+Crearemos un "robot" que funciona solo en internet. Este robot va a:
+1. Pensar una idea para un video de tipo podcast.
+2. Escribir un guion entretenido de menos de 1 minuto (tipo Short o Reel).
+3. Convertir el texto del guion en un audio con una voz humana muy realista.
+4. Buscar videos e imágenes de fondo gratuitos relacionados con el tema.
+5. Editar todo junto, ponerle subtítulos dinámicos y música de fondo.
+6. Subirlo automáticamente a tu página de Facebook y canal de YouTube.
 
-* **El peligro (Contenido No Original):** Facebook y YouTube penalizan severamente con "Originalidad Limitada de Contenido" si subes videos automáticos genéricos (típica voz robótica leyendo Wikipedia con videos de stock aleatorios de fondo).
-* **Por qué OpenMontage es diferente:** A diferencia de las herramientas web tradicionales, OpenMontage utiliza **Remotion** (React) y **HyperFrames (HTML/GSAP)** para maquetar el video. Esto genera composiciones visuales, cinéticas de texto y estructuras de edición dinámicas que imitan el trabajo de un editor humano profesional.
-* **Fórmula de Éxito para Monetizar el Nicho Podcast:**
-  1. **Aporte de Valor / Curación:** En lugar de inventar un podcast ficticio, usa el flujo para **resumir, analizar o debatir episodios reales** de podcasts famosos (ej: Andrew Huberman, Joe Rogan, o podcasts hispanos de nicho como finanzas o misterio).
-  2. **Voz de Alta Calidad:** Evita voces monótonas de robot. Usa **Piper TTS** (incluido gratis en OpenMontage) configurando voces en español con entonación natural o el plan gratuito de **Google Cloud Text-to-Speech**.
-  3. **Edición Visual Dinámica:** Configura las plantillas para incluir barras de sonido animadas (audiowaveforms), subtítulos automáticos dinámicos y transiciones rápidas.
-
----
-
-## 3. Arquitectura del Flujo 100% Gratis (Google Cloud Free Tier)
-
-Para no gastar un solo centavo, utilizaremos:
-* **Servidor:** Instancia `e2-medium` o similar en Google Cloud (puedes usar el crédito gratuito de $300 USD para el renderizado de video, que requiere CPU/GPU).
-* **Guion / IA:** API de **Gemini** (Google AI Studio tiene un tier gratuito excelente y muy superior a OpenAI en costo/beneficio).
-* **Voz (TTS):** **Piper TTS** (local y gratis) o la cuota gratuita mensual de **Google Cloud TTS**.
-* **Videos y Fotos de Stock:** API de **Pexels** y **Pixabay** (cuentas gratuitas con claves de API sin costo).
-* **Composición:** **Remotion** + **FFmpeg** (software de código abierto, renderizado local gratis).
-* **Orquestador:** **n8n** (autohospedado en tu misma máquina de Google Cloud de forma gratuita).
+¡Y lo mejor es que todo el software y recursos que usaremos son completamente **gratuitos**!
 
 ---
 
-## 4. Paso a Paso Detallado para Crear el Flujo
+## PASO 1: CONSEGUIR TUS LLAVES SECRETAS (APIs)
+Para que nuestros programas gratuitos se hablen entre sí, necesitamos unos códigos llamados "API Keys" (claves API). Son como contraseñas especiales. Consigamos las tres que necesitas:
 
-### Paso 1: Instalación de OpenMontage en tu VPS de Google Cloud
-Conéctate por SSH a tu instancia de Google Cloud (Ubuntu) y ejecuta los siguientes comandos:
+### A. La llave de Inteligencia Artificial (Gemini de Google)
+Esta IA escribirá los guiones de tus videos.
+1. Entra a esta página web: [Google AI Studio](https://aistudio.google.com/)
+2. Inicia sesión con tu cuenta normal de Gmail.
+3. Arriba a la izquierda, verás un botón azul que dice **"Get API Key"** (Obtener clave API). Haz clic ahí.
+4. Haz clic en **"Create API Key"** (Crear clave API) y selecciona un proyecto de Google (si no tienes, dale a crear uno nuevo gratis).
+5. Se generará un código largo con letras y números. Cópialo en un bloc de notas de tu computadora y guárdalo como *"LLAVE_GEMINI"*.
+
+### B. La llave para los Videos e Imágenes de Fondo (Pexels)
+Esta página web nos dará videos profesionales de stock gratis para ponerlos detrás de la voz.
+1. Entra a [Pexels](https://www.pexels.com/es-es/)
+2. Crea una cuenta gratuita (puedes registrarte rápido con tu cuenta de Google).
+3. Una vez dentro, ve abajo del todo de la página (al pie de página) o entra directo a este enlace: [Pexels API](https://www.pexels.com/es-es/api/)
+4. Haz clic en el botón **"Get Started"** (Comenzar) o **"Your API Key"**.
+5. Llena el pequeño formulario explicando brevemente que lo usarás para un "proyecto escolar/personal de automatización de videos".
+6. Te darán tu clave API. Cópiala y guárdala como *"LLAVE_PEXELS"*.
+
+---
+
+## PASO 2: INSTALAR TU SERVIDOR GRATUITO EN GOOGLE CLOUD
+Dado que renderizar (crear) videos consume bastante potencia de computadora, no lo haremos en tu PC personal para no ralentizarla. Usaremos una computadora virtual en internet que Google nos da gratis.
+
+### Registrarse en Google Cloud
+1. Entra a [Google Cloud Console](https://console.cloud.google.com/)
+2. Regístrate con tu cuenta de Google.
+3. Te pedirán una tarjeta de crédito o débito para verificar que eres una persona real. **¡No te preocupes, no te cobrarán nada!** Google te regala **$300 USD** de saldo inicial para gastar gratis durante 90 días.
+4. Una vez registrado, ve a la barra de búsqueda de arriba y escribe **"Compute Engine"** y haz clic en él.
+5. Haz clic en **"Crear Instancia"** (Create Instance).
+6. Configura la máquina virtual así:
+   * **Nombre:** `servidor-videos`
+   * **Región:** la que prefieras (por ejemplo, `us-central1`).
+   * **Tipo de máquina:** selecciona la opción **E2-medium** (esta entra dentro de las opciones baratas y tiene suficiente potencia).
+   * **Disco de arranque (Boot disk):** cámbialo a **Ubuntu LTS 22.04** y ponle **30 GB** de espacio en disco.
+   * En "Firewall", marca las casillas de **"Permitir tráfico HTTP"** y **"Permitir tráfico HTTPS"**.
+7. Haz clic abajo del todo en **"Crear"** (Create). ¡Listo! Ya tienes una computadora encendida en internet funcionando para ti.
+
+---
+
+## PASO 3: INSTALAR EL CREADOR DE VIDEOS (OpenMontage)
+Ahora vamos a entrar dentro de esa computadora virtual para instalar OpenMontage de forma correcta y moderna.
+
+1. En la lista de tus instancias de Google Cloud, verás tu máquina `servidor-videos`. A la derecha hay un botón azul que dice **"SSH"**. Haz clic en él.
+2. Se abrirá una ventana negra (una terminal de comandos). No te asustes, solo debes copiar y pegar los siguientes bloques de comandos uno por uno, presionando **Enter** después de cada uno:
 
 ```bash
-# 1. Actualizar sistema e instalar FFmpeg y Node.js (v18+)
+# 1. Actualizar el sistema de la máquina
 sudo apt update && sudo apt upgrade -y
-sudo apt install ffmpeg nodejs npm python3-pip python3-venv -y
 
-# 2. Clonar OpenMontage
-git clone https://github.com/Open-Montage/OpenMontage.git
-cd OpenMontage
+# 2. Instalar Node.js versión 18 (necesaria para el creador de videos)
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+sudo apt install -y nodejs ffmpeg python3-pip python3-venv
 
-# 3. Configurar entorno y dependencias
-make setup
+# 3. Descargar OpenMontage desde GitHub de forma oficial
+git clone https://github.com/calesthio/openmontage.git
+cd openmontage
 
-# O si no tienes 'make' instalado:
-pip3 install -r requirements.txt
+# 4. Crear un entorno virtual para que Python funcione sin errores
+python3 -m venv venv
+source venv/bin/activate
+
+# 5. Instalar los requisitos de Python dentro de nuestro entorno virtual
+pip install --upgrade pip
+pip install -r requirements.txt
+pip install piper-tts
+
+# 6. Instalar el compositor de video (Remotion)
 cd remotion-composer
 npm install
 cd ..
-pip3 install piper-tts
+
+# 7. Crear el archivo de configuración inicial
 cp .env.example .env
 ```
 
-### Paso 2: Configurar las claves gratuitas en `.env`
-Edita el archivo `.env` en la raíz de OpenMontage e introduce tus claves de desarrollador gratuitas:
+3. Ahora abriremos el archivo de configuración para pegar las llaves secretas que guardamos en el Paso 1:
+```bash
+nano .env
+```
+4. Verás una lista de opciones. Usa las flechas del teclado para moverte hacia abajo y pega tus llaves en estas líneas:
 ```env
-PEXELS_API_KEY=tu_clave_gratuita_de_pexels
-GEMINI_API_KEY=tu_clave_gratuita_de_google_ai_studio
-# Si usas Google Cloud TTS en lugar de Piper:
-GOOGLE_APPLICATION_CREDENTIALS=/ruta/a/tus/credenciales.json
+PEXELS_API_KEY=Pega_Aquí_Tu_Llave_De_Pexels
+GEMINI_API_KEY=Pega_Aquí_Tu_Llave_De_Gemini
 ```
-
-### Paso 3: Crear el Flujo en n8n
-Crea un flujo en tu panel de n8n con la siguiente estructura directa:
-
-```
-[ Trigger Cron / Webhook ] ──> [ Nodo Gemini AI ] ──> [ Execute Command ] ──> [ HTTP Request / Publicar ]
-```
-
-1. **Trigger (Disparador):** Configura un nodo **Schedule Trigger** para que se ejecute diariamente, o un **Webhook** para dispararlo manualmente cuando quieras un nuevo video.
-2. **Generación de Guion (Gemini):**
-   * Configura un nodo de Gemini para redactar un guion estilo podcast (diálogo dinámico entre dos voces o monólogo de narrador atrapante).
-   * **Prompt sugerido:** *"Escribe un guion corto de 50 segundos para un short sobre finanzas personales. Debe tener un gancho impactante en los primeros 3 segundos, 3 consejos prácticos y un llamado a la acción al final."*
-3. **Ejecución de OpenMontage (Execute Command):**
-   * Pasa el guion generado por Gemini al comando CLI de OpenMontage. El nodo de n8n ejecutará el comando en el servidor:
-   ```bash
-   python3 run_pipeline.py --pipeline animated_explainer --script "{{ $json.guion }}" --voice "es_MX-standard" --output "/var/www/videos/video_final.mp4"
-   ```
-4. **Publicación Automática:**
-   * **YouTube:** Usa el nodo nativo **YouTube** de n8n para subir el archivo `.mp4` resultante directamente a tu canal como YouTube Short.
-   * **Facebook Reels:** Usa el nodo **HTTP Request** para enviar el video a la **Meta Graph API** (endpoint de Reels de tu página de Facebook).
+5. Guarda los cambios presionando las teclas **Control + O** (luego presiona Enter), y sal del editor presionando **Control + X**.
 
 ---
 
-## 5. Estrategia para Automatizar Subir Videos sin Intervención
+## PASO 4: INSTALAR n8n (EL CEREBRO AUTOMÁTICO)
+Para conectar todo de forma visual (sin escribir código difícil), usaremos **n8n**. Lo instalaremos de forma persistente (para que siga funcionando incluso cuando apagues tu computadora personal o cierres la terminal).
 
-Para que el flujo funcione en piloto automático ("sin tocar nada"):
+1. En la misma pantalla negra de SSH de antes, instala un programa llamado `pm2` que mantiene los programas encendidos para siempre:
+```bash
+sudo npm install -g pm2
+```
+2. Instala n8n de forma global:
+```bash
+sudo npm install n8n -g
+```
+3. Arranca n8n en segundo plano para que nunca se apague:
+```bash
+pm2 start n8n -- start --tunnel
+```
+4. Mira el enlace que generó PM2 o los logs del programa escribiendo:
+```bash
+pm2 logs n8n
+```
+5. Copia el enlace que termina en `.hooks.n8n.cloud` o similar, pégalo en tu navegador web normal de tu PC personal, ¡y listo! Verás la interfaz de n8n lista para ser usada las 24 horas del día.
 
-1. **Configura el "Scheduler" en n8n:** Agenda el flujo para que corra, por ejemplo, cada lunes, miércoles y viernes a las 18:00.
-2. **Publicación Directa vía API:**
-   * **Para YouTube Shorts:** n8n tiene un nodo integrado de YouTube. Configuras tus credenciales de Google, mapeas el archivo de video temporal que escupe OpenMontage, y n8n lo sube con el título y etiquetas optimizadas por IA.
-   * **Para Facebook Reels:** Dado que Facebook no tiene un nodo nativo tan simple, utilizas el nodo **HTTP Request** para hacer un POST a:
-     `https://graph.facebook.com/v18.0/{page-id}/video_reels` con el token de acceso de tu página, iniciando la carga del video de forma 100% directa y automatizada.
+---
 
-Con este sistema montado en tu Google Cloud, tienes una fábrica de videos tipo podcast que genera contenido original, dinámico y listo para monetizar de forma completamente gratuita.
+## PASO 5: CONSTRUIR EL FLUJO EN n8n
+Dentro de n8n, vamos a crear el camino que seguirá nuestro robot:
+
+```
+[ Cajita 1: Reloj de Tiempo ] ──> [ Cajita 2: Inteligencia Artificial ] ──> [ Cajita 3: Generador de Video ]
+```
+
+### Cajita 1: El Reloj (Schedule Trigger)
+1. En n8n, haz clic en el botón **"+"** (Añadir nodo).
+2. Busca **"Schedule Trigger"** y selecciónalo.
+3. Configúralo para que se ejecute a la hora que quieras subir tus videos (por ejemplo, "Todos los días a las 18:00").
+
+### Cajita 2: Redactar el Guion (Google Gemini)
+1. Haz clic en el botón **"+"** de la flecha que sale del Reloj.
+2. Busca **"Google Gemini"** o usa un nodo de **"HTTP Request"** apuntando a la API gratuita de Gemini.
+3. Introduce la Llave API de Gemini que guardaste en el Paso 1.
+4. En el campo de texto (Prompt), escribe exactamente lo siguiente:
+   > *"Escribe un guion dinámico estilo Podcast de 45 segundos para jóvenes sobre datos curiosos del espacio. El guion debe ser narrado en primera persona de forma muy entretenida y terminar con una pregunta para generar comentarios."*
+
+### Cajita 3: Generar el Video (Execute Command)
+1. Conecta la salida de Gemini a un nuevo nodo llamado **"Execute Command"** (Ejecutar comando).
+2. Este nodo le dará la orden a OpenMontage de fabricar el video en segundo plano con el guion que Gemini acaba de escribir.
+3. En el campo de comando, escribe lo siguiente:
+   ```bash
+   # Activa el entorno de Python y corre OpenMontage
+   cd /home/tu_usuario/openmontage && source venv/bin/activate && python3 run_pipeline.py --pipeline animated_explainer --script "{{ $json.text }}" --output "/home/tu_usuario/video_final.mp4"
+   ```
+   *(Nota: Reemplaza `tu_usuario` por el nombre de usuario que ves en tu terminal negra de Google Cloud antes del símbolo @).*
+
+---
+
+## PASO 6: SUBIR EL VIDEO AUTOMÁTICAMENTE Y MONETIZAR
+
+Una vez que el video se renderiza en tu servidor, n8n se encargará de subirlo.
+
+### Para YouTube Shorts:
+1. Añade un nodo llamado **"YouTube"** a la salida de tu generador de video.
+2. Conecta tu canal de YouTube en el nodo (n8n te guiará para iniciar sesión de forma segura).
+3. Configura la acción como **"Upload Video"**.
+4. En "File", selecciona el archivo generado (`/home/tu_usuario/video_final.mp4`).
+5. En el título pon: `"Datos Increíbles del Espacio 🚀 #Shorts #Space"` (puedes pedirle a Gemini que invente el título automáticamente en una cajita anterior si quieres).
+
+### Para Facebook Reels (Página de Monetización):
+1. Añade un nodo **"HTTP Request"** al final del flujo.
+2. Configura el método como **"POST"**.
+3. En la URL escribe: `https://graph.facebook.com/v18.0/ID_DE_TU_PAGINA/video_reels`
+4. Pega el Token de acceso de tu página de Facebook para que se suba de forma directa y 100% en automático.
+
+### Cómo monetizar sin problemas de "Contenido No Original" en Facebook:
+1. **Sé constante:** Sube 1 o 2 Shorts/Reels diarios a la misma hora exacta.
+2. **Interactúa:** En el primer comentario fijado de tu video, haz una pregunta para que la gente comente. Facebook premia muchísimo la interacción y te dará más alcance.
+3. **Mejora la plantilla:** A medida que aprendas, puedes cambiar las tipografías y colores en el archivo de configuración de OpenMontage para que tus videos tengan un estilo único que nadie más use. ¡Esto asegura que Facebook te acepte en su programa de monetización de estrellas y anuncios in-stream!
