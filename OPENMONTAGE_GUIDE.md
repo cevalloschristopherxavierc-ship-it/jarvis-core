@@ -1,5 +1,5 @@
 # Guía Definitiva de Automatización (OpenMontage + n8n) - ¡Solo para Facebook Reels!
-*Creado especialmente para que a tus 15 años puedas configurar tu propia fábrica de videos de nicho tipo podcast y monetizar en Facebook de forma 100% gratuita usando Inteligencia Artificial.*
+*Creado especialmente para que a tus 15 años puedas configurar tu propia fábrica de videos de nicho tipo podcast y monetizar en Facebook de forma 100% gratuita usando Inteligencia Artificial y tu saldo de Google Cloud.*
 
 ---
 
@@ -7,31 +7,63 @@
 
 Para que Facebook te acepte en su programa de monetización (Anuncios en Reels y Estrellas) y **no te penalice** con el famoso baneo de "Originalidad Limitada de Contenido", tus videos de IA deben tener:
 1. **Un guion original e interesante:** Creado por Inteligencia Artificial (Gemini) estructurado como un fragmento de podcast muy dinámico.
-2. **Voces realistas (MP3):** Usaremos voces realistas de IA que son completamente gratis.
-3. **Imágenes y Videos de alta calidad:** Para evitar usar siempre los mismos clips de stock, conectaremos generadores de imágenes que diseñarán imágenes personalizadas por IA para ilustrar tu podcast.
+2. **Voces realistas (MP3):** Usaremos la tecnología de Google Cloud Text-to-Speech para generar voces perfectas y humanas.
+3. **Imágenes y Videos de alta calidad:** Para evitar usar siempre los mismos clips de stock, conectaremos generadores de imágenes que diseñarán imágenes personalizadas por IA para ilustrar tu podcast usando el modelo **FLUX**.
 
 ---
 
-## PASO 1: CONSEGUIR TUS LLAVES SECRETAS GRATUITAS (APIs)
-Para que nuestro sistema pueda crear los guiones y las imágenes gratis, necesitamos tres contraseñas especiales (API Keys). Vamos a conseguirlas paso a paso:
+## 🧠 EL CAMINO INTELIGENTE: USAR VERTEX AI (Google Cloud)
+Como tienes **$300 USD gratis** de crédito en Google Cloud, la mejor opción y la más profesional es usar **Vertex AI** en lugar del API estándar de Google AI Studio.
 
-### A. La llave de Inteligencia Artificial (Gemini de Google)
-Esta IA escribirá los guiones de tus videos.
-1. Entra aquí: [Google AI Studio](https://aistudio.google.com/)
-2. Inicia sesión con tu cuenta normal de Gmail.
-3. Haz clic arriba a la izquierda en el botón azul que dice **"Get API Key"** (Obtener clave API).
-4. Haz clic en **"Create API Key"** (Crear clave API) y selecciona un proyecto (si no tienes, dale a crear uno nuevo gratis).
-5. Copia el código largo que se genera y guárdalo en tu bloc de notas como *"LLAVE_GEMINI"*.
+Vertex AI corre directamente bajo tu cuenta de Google Cloud y **consume de tus $300 USD de regalo**, lo que significa que tendrás llamadas infinitas, sin límites de velocidad (Rate Limits) y de forma 100% gratuita.
 
-### B. La llave de Generación de Imágenes por IA (Fal.ai o Replicate)
+Aquí tienes los pasos exactos para configurar tu cuenta e integrarlo todo:
+
+---
+
+## PASO 1: ACTIVAR VERTEX AI Y OBTENER TU ARCHIVO DE ACCESO (JSON)
+
+Para que tu n8n se conecte con tu cuenta de Google Cloud de forma ultra-segura, necesitamos crear una "llave digital" en un archivo JSON. Sigue estos pasos súper sencillos:
+
+### A. Activar la API de Vertex AI
+1. Entra a tu [Google Cloud Console](https://console.cloud.google.com/).
+2. En la barra de búsqueda de arriba, escribe **"Vertex AI API"**.
+3. Haz clic en el resultado correspondiente y presiona el botón azul que dice **"Habilitar"** (Enable). *Espera unos segundos a que se active.*
+
+### B. Activar la API de Text-to-Speech (Para las voces en MP3)
+1. En la misma barra de búsqueda de arriba, escribe **"Cloud Text-to-Speech API"**.
+2. Haz clic en el resultado y presiona el botón azul de **"Habilitar"** (Enable).
+
+### C. Crear la Cuenta de Servicio y Descargar la Llave JSON
+Este archivo JSON es como el "pase VIP" para tu n8n.
+1. En el menú de la izquierda (las tres rayas de arriba a la izquierda), ve a **"IAM y administración"** (IAM & Admin) > **"Cuentas de servicio"** (Service Accounts).
+2. Haz clic arriba en el botón **"+ Crear cuenta de servicio"** (Create Service Account).
+3. Ponle un nombre sencillo, por ejemplo: `n8n-conexion-ia`.
+4. Haz clic en **"Crear y continuar"** (Create and Continue).
+5. En el paso de **"Seleccionar un rol"**, haz clic en el menú desplegable y busca estos dos roles:
+   * **Vertex AI User** (Usuario de Vertex AI).
+   * **Text-to-Speech Creator / User** (si deseas habilitar permisos de voz).
+   *(O para no complicarte, puedes ponerle el rol de **Propietario** o **Owner** para que tenga acceso total a usar las APIs de tu proyecto).*
+6. Haz clic en **"Continuar"** y luego en **"Listo"** (Done).
+7. Verás la cuenta de servicio creada en la lista. Haz clic en los **tres puntitos** a la derecha de ella y selecciona **"Administrar claves"** (Manage Keys).
+8. Haz clic en **"Agregar clave"** (Add Key) > **"Crear clave nueva"** (Create New Key).
+9. Elige el formato **JSON** y haz clic en **"Crear"**.
+10. Se descargará un archivo `.json` en tu computadora. **¡Guárdalo muy bien!** Ese archivo contiene el acceso seguro a tus $300 USD de crédito de Google Cloud.
+
+---
+
+## PASO 2: CONSEGUIR TUS OTRAS LLAVES SECRETAS (APIs)
+Para que nuestro sistema pueda crear las imágenes de alta calidad gratis, necesitamos estas dos claves adicionales:
+
+### A. La llave de Generación de Imágenes por IA (Fal.ai o Replicate)
 Usaremos **Fal.ai** o **Replicate**, que son plataformas en la nube que te regalan créditos gratuitos al registrarte para generar miles de imágenes ultra-realistas con el modelo **FLUX** (la mejor IA de imágenes del mundo) sin pagar nada.
 1. Entra en [Fal.ai](https://fal.ai/) o [Replicate](https://replicate.com/)
-2. Regístrate e inicia sesión gratis usando tu cuenta de **GitHub** o correo.
+2. Regístrate e inicia sesión gratis usando tu cuenta de **GitHub** o tu correo.
 3. Ve a la sección de **API Keys** o **Dashboard / Keys**.
 4. Haz clic en **"Create Key"** (Crear clave).
 5. Copia esa clave y guárdala como *"LLAVE_IMAGENES"*.
 
-### C. La llave para Videos de Stock Gratuitos (Pexels)
+### B. La llave para Videos de Stock Gratuitos (Pexels)
 Si en alguna parte de la edición quieres complementar tus imágenes de IA con videos reales de alta calidad:
 1. Entra a [Pexels](https://www.pexels.com/es-es/) y regístrate gratis.
 2. Entra directo a este enlace: [Pexels API](https://www.pexels.com/es-es/api/)
@@ -40,29 +72,10 @@ Si en alguna parte de la edición quieres complementar tus imágenes de IA con v
 
 ---
 
-## PASO 2: INSTALAR TU SERVIDOR GRATUITO EN GOOGLE CLOUD
-Dado que crear videos con IA consume bastante potencia, usaremos una computadora virtual en internet que Google nos da gratis.
-
-### Registrarse en Google Cloud
-1. Entra a [Google Cloud Console](https://console.cloud.google.com/)
-2. Regístrate con tu cuenta de Google.
-3. Te pedirán una tarjeta para verificar que eres real. **¡No te cobrarán nada!** Google te regala **$300 USD** de saldo inicial para gastar gratis durante 90 días.
-4. En la barra de búsqueda de arriba, escribe **"Compute Engine"** y haz clic en él.
-5. Haz clic en **"Crear Instancia"** (Create Instance).
-6. Configúrala así para mantenerla barata o gratis:
-   * **Nombre:** `servidor-videos-facebook`
-   * **Región:** `us-central1`
-   * **Tipo de máquina:** **E2-medium** (potente y económica).
-   * **Disco de arranque (Boot disk):** Haz clic en "Cambiar", selecciona **Ubuntu LTS 22.04** y ponle **30 GB** de espacio en disco.
-   * En "Firewall", marca **"Permitir tráfico HTTP"** y **"Permitir tráfico HTTPS"**.
-7. Haz clic abajo del todo en **"Crear"**. ¡Listo! Ya tienes una computadora encendida en internet.
-
----
-
-## PASO 3: INSTALAR EL GENERADOR DE VIDEOS (OpenMontage)
+## PASO 3: INSTALAR EL GENERADOR DE VIDEOS (OpenMontage) EN TU VM
 Ahora entraremos dentro de tu computadora virtual para instalar OpenMontage y configurarle la generación de imágenes por IA.
 
-1. En la lista de tus servidores de Google Cloud, haz clic en el botón azul de la derecha que dice **"SSH"**.
+1. En la lista de tus servidores de Google Cloud (Compute Engine > Instancias de VM), haz clic en el botón azul de la derecha que dice **"SSH"**.
 2. Se abrirá una ventana negra de comandos. Copia y pega estos comandos uno por uno presionando **Enter** después de cada uno para instalar la base:
 
 ```bash
@@ -101,9 +114,6 @@ nano .env
 ```
 4. Usa las flechas del teclado para bajar y pon tus llaves en estas líneas:
 ```env
-# Clave de Gemini para crear los guiones
-GEMINI_API_KEY=Pega_Aquí_Tu_Llave_De_Gemini
-
 # Clave de Fal.ai para generar tus propias imágenes de IA gratis con FLUX
 FAL_KEY=Pega_Aquí_Tu_Llave_De_Fal_o_Replicate
 
@@ -134,24 +144,28 @@ pm2 logs n8n
 
 ---
 
-## PASO 5: DISEÑAR EL FLUJO AUTOMÁTICO EN n8n
-Dentro de n8n, uniremos las piezas arrastrando cajitas:
+## PASO 5: DISEÑAR EL FLUJO AUTOMÁTICO CON VERTEX AI EN n8n
+
+Dentro de n8n, cambiaremos la caja de Google Gemini tradicional por la de **Google Vertex AI** para usar tus $300 USD de Google Cloud:
 
 ```
-[ Programador de Reloj ] ──> [ Escribir Guion (Gemini) ] ──> [ Crear Video (Execute Command) ]
+[ Programador de Reloj ] ──> [ Google Vertex AI (Escribir Guion) ] ──> [ Crear Video (Execute Command) ]
 ```
 
 ### Cajita 1: Schedule Trigger (El Reloj)
-* Busca el nodo **"Schedule Trigger"** y configúralo para que se ejecute "Todos los días a las 17:00" (buena hora para subir Reels).
+* Busca el nodo **"Schedule Trigger"** y configúralo para que se ejecute "Todos los días a las 19:00" (la mejor hora en Ecuador).
 
-### Cajita 2: Google Gemini (El Guionista de Podcast)
-* Conecta el Reloj a un nodo de **"Google Gemini"**.
-* Pon tu llave de Gemini de Google AI Studio.
-* En el Prompt, escribe:
-  > *"Escribe un guion corto de 45 segundos estilo debate o podcast interactivo sobre finanzas o desarrollo personal para jóvenes. El guion debe estar optimizado para mantener la atención del espectador en los primeros 3 segundos, tener buen ritmo de conversación y terminar con una pregunta polémica para Facebook."*
+### Cajita 2: Google Vertex AI (El Guionista de Podcast)
+1. Agrega el nodo **"Google Vertex AI"** a tu flujo.
+2. Haz clic en "Añadir Credenciales" (Add Credentials).
+3. Selecciona el tipo de credencial de Google Service Account.
+4. Abre el archivo JSON que descargaste en el **Paso 1 (Parte C)** usando un bloc de notas, copia todo su contenido y pégalo completo dentro de la caja de credenciales de n8n. ¡Listo! Ya estás conectado a tus $300 USD gratis.
+5. Selecciona el modelo **gemini-1.5-flash** o el que desees.
+6. En el Prompt, escribe nuestro prompt de Datos Curiosos optimizado:
+  > *"Escribe un guion corto de 45 segundos estilo debate o podcast interactivo sobre datos curiosos asombrosos del océano o el espacio. El guion debe estar optimizado para mantener la atención del espectador en los primeros 3 segundos (gancho), tener 3 datos fascinantes muy fluidos, y terminar con una pregunta polémica para Facebook."*
 
 ### Cajita 3: Execute Command (El Creador de Video)
-* Conecta el guion a un nodo **"Execute Command"**.
+* Conecta la salida de Vertex AI a un nodo **"Execute Command"**.
 * Escribe esta orden exacta para que OpenMontage use tus llaves de IA, genere imágenes con FLUX, use la voz en MP3 y renderice el video final para Facebook:
   ```bash
   cd /home/tu_usuario/openmontage && source venv/bin/activate && python3 run_pipeline.py --pipeline animated_explainer --script "{{ $json.text }}" --output "/home/tu_usuario/reels_facebook.mp4"
@@ -169,4 +183,4 @@ Para subir tus Reels sin tocar nada:
    `https://graph.facebook.com/v18.0/ID_DE_TU_PAGINA/video_reels`
 4. Añade los parámetros requeridos por Facebook (como el token de página y el archivo de video generado en `/home/tu_usuario/reels_facebook.mp4`).
 
-¡Eso es todo! Tu robot se despertará todos los días a la misma hora, creará un guion original, le dará voz, generará imágenes espectaculares de IA y publicará tu Reel de forma completamente automática y gratuita.
+¡Eso es todo! Tu robot se despertará todos los días a la misma hora, creará un guion original consumiendo tus créditos gratuitos de Google Cloud Vertex AI, le dará voz, generará imágenes espectaculares de IA y publicará tu Reel de forma completamente automática.
