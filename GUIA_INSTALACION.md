@@ -5,12 +5,24 @@
 
 ---
 
+## ⚠️ NOTA IMPORTANTÍSIMA PARA WINDOWS POWERSHELL
+
+Si estás usando **Windows PowerShell** (la pantalla azul o negra de Windows):
+1.  **NO escribas las comillas o bloques que dicen \`\`\`bash** o **\`\`\`**. Esos bloques son sólo para "marcar" que es un comando. ¡Sólo debes copiar el texto que está adentro!
+2.  Por ejemplo, si la guía dice:
+    ```bash
+    acc start
+    ```
+    Tú en tu PowerShell debes escribir únicamente: **`acc start`** y presionar la tecla Enter.
+
+---
+
 ## 🎯 Glosario de Palabras Clave (Para Entender Todo)
 
 *   **¿Qué es un "Token"?**
     Un token es la unidad básica con la que miden tu consumo las Inteligencias Artificiales (como Claude o Gemini). Aproximadamente, **1 token equivale a 4 letras o una palabra corta**. Cada archivo que la IA lee y cada mensaje que te responde gasta tokens. ¡Si ahorras tokens, tu cuota gratuita te durará muchísimo más tiempo!
 *   **¿Qué es la "Terminal" o "Consola de Comandos"?**
-    Es esa pantalla negra donde se escriben comandos de texto para controlar tu computadora o servidor.
+    Es esa pantalla negra (o azul, como tu Windows PowerShell) donde se escriben comandos de texto para controlar tu computadora o servidor.
 *   **¿Qué es un "Proxy"?**
     Es como un puente o intermediario. En este caso, el proxy toma las preguntas de tu extensión de Claude (OpenCode) y las envía a los servidores gratuitos de Google de forma que no tengas que pagar una suscripción de $20 dólares al mes.
 
@@ -24,27 +36,27 @@ Hemos configurado un sistema global de **4 herramientas** que trabajan juntas en
 
 ### 1️⃣ Antigravity Claude Proxy (`acc`)
 **¿Qué es y para qué sirve?**
-Es el puente que te permite usar Claude y Gemini **completamente gratis** usando los créditos gratuitos de tu cuenta de Google.
+Es el puente que te permite usar Claude y Gemini **completamente gratis** usando los límites y la cuota de tu cuenta de Google normal.
 
 *   **¿Dónde se descarga / Página web oficial?:** Su código es libre y está en [GitHub - badrisnarayanan/antigravity-claude-proxy](https://github.com/badrisnarayanan/antigravity-claude-proxy).
 *   **¿Cómo se instaló?:** Lo instalé de forma global en tu máquina ejecutando un gestor de paquetes llamado `npm`.
 *   **¿Cómo lo pones a funcionar? (Instrucciones paso a paso):**
 
-    1.  **Iniciar el puente:** Abre tu terminal de comandos y escribe lo siguiente para encender el proxy:
-        ```bash
+    1.  **Iniciar el puente:** Abre tu PowerShell y escribe exactamente lo siguiente, luego presiona Enter:
+        ```powershell
         acc start
         ```
         *(Esto hará que el puente se encienda en segundo plano. Ya puedes cerrar la terminal si quieres, seguirá funcionando).*
 
-    2.  **Conectar tu cuenta de Google gratis:** Ahora, escribe este comando para asociar tu cuenta de Google:
-        ```bash
+    2.  **Conectar tu cuenta de Google gratis:** Ahora, escribe este comando y presiona Enter:
+        ```powershell
         acc accounts add
         ```
-        *   **¿Qué va a pasar?:** Se abrirá automáticamente una ventana en tu navegador web de Google. Selecciona tu cuenta de Google y dale en "Permitir" o "Autorizar" de manera segura. ¡Listo! Tu cuenta gratuita estará enlazada para darte acceso gratis a los modelos de Claude y Gemini.
+        *   **¿Qué va a pasar?:** Se abrirá automáticamente una ventana en tu navegador web de Google. Selecciona tu cuenta de Google y dale en "Permitir" o "Autorizar" de manera segura. ¡Listo! Tu cuenta gratuita estará enlazada para darte acceso gratis a los de Claude y Gemini.
         *   **¿Y si estás en un servidor remoto donde no hay navegador?:** Escribe `acc accounts add --no-browser`. Te dará un enlace de internet largo. Cópialo, pégalo en el navegador de tu computadora, autoriza y luego copia el código de confirmación que te aparezca en pantalla para pegarlo de vuelta en la terminal.
 
     3.  **Ver tu panel de control y cuotas de uso:** Para ver cuántas solicitudes gratis te quedan, abre tu panel visual escribiendo:
-        ```bash
+        ```powershell
         acc ui
         ```
         *(Se abrirá una bonita página web en tu computadora donde verás todo de forma gráfica).*
@@ -61,11 +73,11 @@ Cada vez que tu extensión OpenCode ejecuta una tarea en tu computadora (por eje
 *   **¿Cómo se usa?:**
     *   **¡Es automático!** No tienes que hacer nada. Ya modifiqué los archivos internos de configuración de tu extensión OpenCode y de Claude Code para que cada vez que hagan una acción de terminal, RTK limpie y comprima el texto en segundo plano sin que te des cuenta.
     *   **Ver tus ahorros:** Si quieres ver cuánto dinero y tokens te has ahorrado, escribe en tu terminal:
-        ```bash
+        ```powershell
         rtk gain
         ```
     *   **Ver el historial:** Para ver qué comandos ha limpiado y comprimido:
-        ```bash
+        ```powershell
         rtk gain --history
         ```
 
@@ -131,7 +143,8 @@ Todos tus archivos se han configurado en la carpeta oculta del sistema de tu usu
 
 ## 🎯 RESUMEN DE QUÉ HACER AHORA:
 
-¡Todo el sistema está listo! Lo único que debes hacer es:
-1.  Abre tu terminal y escribe: `acc start` para encender el proxy.
-2.  Escribe: `acc accounts add` para conectar tu cuenta de Google gratuita.
-3.  ¡Abre tu editor de código o extensión de OpenCode y empieza a trabajar gratis y ahorrando hasta un 90% de tokens!
+¡Todo el sistema está listo! Lo único que debes hacer es abrir tu **Windows PowerShell** y escribir estos comandos uno por uno (presionando Enter tras escribir cada uno):
+
+1.  Escribe: **`acc start`** y presiona Enter (esto enciende el proxy).
+2.  Escribe: **`acc accounts add`** y presiona Enter (esto abrirá Google en tu navegador para conectar tu cuenta gratis).
+3.  ¡Listo! Abre tu extensión OpenCode en VS Code y empieza a trabajar completamente gratis con Claude y ahorrando hasta un 90% de tokens.
